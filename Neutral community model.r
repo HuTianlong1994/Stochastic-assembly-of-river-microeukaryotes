@@ -8,16 +8,24 @@ library(stats4)
 #spp: A community table with taxa as rows and samples as columns
 spp<-read.csv('spp.txt',head=T,stringsAsFactors=F,row.names=1,sep = "\t")
 spp<-t(spp)
+#get the mean of abundance of each sample
 N <- mean(apply(spp, 1, sum))
+#get the mean of species relative abundance in metacommmunity
 p.m <- apply(spp, 2, mean)
 p.m <- p.m[p.m != 0]
+#get the percentage of each species in metacommmunity
 p <- p.m/N
+#get the binary data of community abundance matrix
 spp.bi <- 1*(spp>0)
+#get the frequncy of species occurrence in metacommunity
 freq <- apply(spp.bi, 2, mean)
 freq <- freq[freq != 0]
+#get a table record species percentage and occurrence frequency in metacommunity
 C <- merge(p, freq, by=0)
+#sort the table according to occurence frquency of each species
 C <- C[order(C[,2]),]
 C <- as.data.frame(C)
+#delete rows containning zero
 C.0 <- C[!(apply(C, 1, function(y) any(y == 0))),]
 p <- C.0[,2]
 freq <- C.0[,3]
